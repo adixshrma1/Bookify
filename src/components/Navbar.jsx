@@ -16,9 +16,9 @@ const Navbar = () => {
         </NavLink>
       </div>
       <div className="flex gap-10">
-        <NavLink to='/books'><p className="cursor-pointer">Books</p></NavLink>
-        <NavLink to='/listbooks'><p className="cursor-pointer">List Books</p></NavLink>
-        <NavLink to='/mybooks'><p className="cursor-pointer">My Books</p></NavLink>
+        <NavLink to='/books' style={({isActive}) => ({textDecoration: isActive ? 'underline': 'none'})}><p className="cursor-pointer">Books</p></NavLink>
+        <NavLink to='/listbooks' style={({isActive}) => ({textDecoration: isActive ? 'underline': 'none'})}><p className="cursor-pointer">List Books</p></NavLink>
+        <NavLink to='/mybooks' style={({isActive}) => ({textDecoration: isActive ? 'underline': 'none'})}><p className="cursor-pointer">My Books</p></NavLink>
       </div>
       <div className="flex items-center gap-2">
         { user && <img className="w-8 rounded-full" src={user.photoURL}/>}

@@ -10,8 +10,8 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { getFirestore, collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCpUs6pmNLH_HhtErU_BmCwKsYRcN6Z4gM",
@@ -46,15 +46,18 @@ export const FirebaseProvider = ({ children }) => {
   const loginWithEmailPass = (email, pass) => {
     return signInWithEmailAndPassword(auth, email, pass);
   };
-  const signInWithGoogle = ()=>{
+  const signInWithGoogle = () => {
     return signInWithPopup(auth, googleAuthProvider);
-  }
+  };
   const logOut = () => {
     return signOut(auth);
   };
 
-  const createNewListing = async (name, price, isbn, coverImg)=>{
-    const imageRef = ref(storage, `uploads/images/${Date.now()}-${coverImg.name}`)
+  const createNewListing = async (name, price, isbn, coverImg) => {
+    const imageRef = ref(
+      storage,
+      `uploads/images/${Date.now()}-${coverImg.name}`
+    );
     const uploadResult = await uploadBytes(imageRef, coverImg);
     return await addDoc(collection(firestore, "books"), {
       name,
@@ -64,13 +67,38 @@ export const FirebaseProvider = ({ children }) => {
       username: user.displayName,
       userImg: user.photoURL,
       email: user.email,
-      userId: user.uid
-    })
+      userId: user.uid,
+    });
+  };
+
+  const listAllBooks = () => {
+    return getDocs(collection(firestore, "books"));
+  };
+  console.log(user)
+  const listMyBooks = async ()=>{
+    const q = query(collection(firestore, "books"), where("userId", "==", user.uid));
+    const snapshot = await getDocs(q);
+    return snapshot;
   }
+  const getImgURL = (path) => {
+    return getDownloadURL(ref(storage, path));
+  };
+
 
   return (
     <FirebaseContext.Provider
-      value={{ signupWithEmailPass, loginWithEmailPass, signInWithGoogle, logOut, isLoggedIn, user, createNewListing }}
+      value={{
+        signupWithEmailPass,
+        loginWithEmailPass,
+        signInWithGoogle,
+        logOut,
+        isLoggedIn,
+        user,
+        createNewListing,
+        listAllBooks,
+        listMyBooks,
+        getImgURL,
+      }}
     >
       {children}
     </FirebaseContext.Provider>

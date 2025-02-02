@@ -7,13 +7,13 @@ const ListBooks = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset
+    reset,
   } = useForm();
 
   const { createNewListing } = useFirebase();
 
   const onSubmit = async (data) => {
-    await createNewListing(data.name, data.price, data.isbn, data.coverImg[0])
+    await createNewListing(data.name, data.price, data.isbn, data.coverImg[0]);
     reset();
   };
 
