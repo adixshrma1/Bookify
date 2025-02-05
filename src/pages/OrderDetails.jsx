@@ -24,11 +24,11 @@ const OrderDetails = () => {
         <p>No one has ordered this book yet.</p>
       ) : (
         <div>
-          {orders.map((user) => (
-            <div key={user.data().time} className="border-2 border-gray-500 rounded p-4">
-              <p>Name: {user.data().name}</p>
-              <p>Email: {user.data().email}</p>
-              <p>Quantity: {user.data().quantity}</p>
+          {orders.map((order) => (
+            <div key={order.data().id} className="border-2 border-gray-500 rounded p-4">
+              <p>Name: {order.data().name}</p>
+              <p>Email: {order.data().email}</p>
+              <p>Quantity: {order.data().quantity}</p>
             </div>
           ))}
         </div>
