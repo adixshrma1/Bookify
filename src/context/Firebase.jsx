@@ -10,7 +10,7 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth";
-import { getFirestore, collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, where } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const firebaseConfig = {
@@ -39,7 +39,7 @@ export const FirebaseProvider = ({ children }) => {
     });
   }, [auth]);
   const isLoggedIn = user ? true : false;
-
+  // console.log(user);  // testing...
   const signupWithEmailPass = (email, pass) => {
     return createUserWithEmailAndPassword(auth, email, pass);
   };
@@ -74,7 +74,7 @@ export const FirebaseProvider = ({ children }) => {
   const listAllBooks = () => {
     return getDocs(collection(firestore, "books"));
   };
-  console.log(user)
+
   const listMyBooks = async ()=>{
     const q = query(collection(firestore, "books"), where("userId", "==", user.uid));
     const snapshot = await getDocs(q);
@@ -83,7 +83,25 @@ export const FirebaseProvider = ({ children }) => {
   const getImgURL = (path) => {
     return getDownloadURL(ref(storage, path));
   };
+  
+  const viewBook = async (id)=>{
+    const bookRef = doc(firestore, "books", id);
+    const snapshot = await getDoc(bookRef);
+    return snapshot;
+  }
 
+  const placeOrder = (bookId, quantity) => {
+    return addDoc(collection(firestore, "books/" + bookId + "/orders"), {
+      name: user.displayName,
+      email: user.email,
+      quantity,
+      time: Date.now()
+    })
+  }
+
+  const getOrders = (bookId) =>{
+    return getDocs(collection(firestore, "books", bookId, "orders"))
+  }
 
   return (
     <FirebaseContext.Provider
@@ -98,6 +116,9 @@ export const FirebaseProvider = ({ children }) => {
         listAllBooks,
         listMyBooks,
         getImgURL,
+        viewBook,
+        placeOrder,
+        getOrders,
       }}
     >
       {children}

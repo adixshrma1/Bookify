@@ -19,7 +19,7 @@ const Books = () => {
   return (
     <div className='mt-20 mx-auto w-[80%] grid grid-cols-4 gap-3'>
       {books.map((book) => (
-        <Card key={book.id} id={book.id} {...book.data()}/>
+        <Card key={book.id} link={`/books/view/${book.id}`} {...book.data()}/>
       ))}
     </div>
   )
